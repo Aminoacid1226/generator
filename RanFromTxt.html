@@ -53,25 +53,26 @@
     </div>
 
     <script type="text/javascript">
+        // 记录生成的内容和时间
         let generatedLines = JSON.parse(localStorage.getItem('generatedLines')) || [];
 
         window.onload = function() {
             if (generatedLines.length > 0) {
                 document.getElementById("result").innerHTML = "继续上次生成的内容";
                 let historyList = document.getElementById("historyList");
-                generatedLines.forEach(function(line) {
+                // 逆序遍历以显示最新的在前
+                generatedLines.forEach(function(entry) {
                     let listItem = document.createElement("li");
-                    listItem.textContent = line;
+                    listItem.textContent = `${entry.line} - ${entry.time}`; // 显示内容和时间
                     historyList.appendChild(listItem);
                 });
             }
         };
 
-        
         async function fetchLines() {
-            const response = await fetch('666.txt'); // 读取文本文件
+            const response = await fetch('lines.txt'); // 读取文本文件
             const text = await response.text();
-            return text.split('\n'); // 按行分割成数组
+            return text.split('\n').filter(line => line.trim() !== ''); // 移除空行
         }
 
         async function generateRandomLine() {
@@ -84,17 +85,20 @@
             let randomLine;
             do {
                 randomLine = lines[Math.floor(Math.random() * lines.length)];
-            } while (generatedLines.includes(randomLine)); // 如果已生成则重新生成
+            } while (generatedLines.some(entry => entry.line === randomLine)); // 如果已生成则重新生成
 
-            generatedLines.push(randomLine);
+            // 记录生成的内容和时间
+            const timestamp = new Date().toLocaleString(); // 获取当前时间
+            generatedLines.unshift({ line: randomLine, time: timestamp }); // 添加到数组前面
+
             document.getElementById("result").innerHTML = randomLine;
 
             localStorage.setItem('generatedLines', JSON.stringify(generatedLines));
 
             let historyList = document.getElementById("historyList");
             let listItem = document.createElement("li");
-            listItem.textContent = randomLine;
-            historyList.appendChild(listItem);
+            listItem.textContent = `${randomLine} - ${timestamp}`; // 显示内容和时间
+            historyList.prepend(listItem); // 添加到列表前面
         }
 
         function clearHistory() {
@@ -106,4 +110,3 @@
     </script>
 </body>
 </html>
-
