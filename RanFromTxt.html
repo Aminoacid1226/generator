@@ -70,7 +70,7 @@
         };
 
         async function fetchLines() {
-            const response = await fetch('lines.txt'); // 读取文本文件
+            const response = await fetch('666.txt'); // 读取文本文件
             const text = await response.text();
             return text.split('\n').filter(line => line.trim() !== ''); // 移除空行
         }
