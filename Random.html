@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不重复随机数生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .history {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>1 到 666 不重复随机数生成器</h1>
+        <button onclick="generateRandomNumber()">生成随机数</button>
+        <button onclick="clearHistory()">清除历史记录</button> <!-- 添加清除按钮 -->
+        <p id="result">点击按钮生成随机数</p>
+        <div class="history">
+            <h2>生成历史</h2>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // 从 localStorage 中获取历史记录
+        let generatedNumbers = JSON.parse(localStorage.getItem('generatedNumbers')) || [];
+
+        // 初始化页面，显示历史记录
+        window.onload = function() {
+            if (generatedNumbers.length > 0) {
+                document.getElementById("result").innerHTML = "继续上次生成的随机数";
+                let historyList = document.getElementById("historyList");
+                generatedNumbers.forEach(function(num) {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = num;
+                    historyList.appendChild(listItem);
+                });
+            }
+        };
+
+        function generateRandomNumber() {
+            if (generatedNumbers.length === 666) {
+                document.getElementById("result").innerHTML = "所有数字都已生成完毕!";
+                return;
+            }
+
+            let randomNumber;
+            do {
+                randomNumber = Math.floor(Math.random() * 666) + 1;
+            } while (generatedNumbers.includes(randomNumber)); // 如果已生成则重新生成
+
+            // 记录生成的随机数
+            generatedNumbers.push(randomNumber);
+            document.getElementById("result").innerHTML = "随机数: " + randomNumber;
+
+            // 保存到 localStorage
+            localStorage.setItem('generatedNumbers', JSON.stringify(generatedNumbers));
+
+            // 更新生成历史
+            let historyList = document.getElementById("historyList");
+            let listItem = document.createElement("li");
+            listItem.textContent = randomNumber;
+            historyList.appendChild(listItem);
+        }
+
+        // 清除历史记录的函数
+        function clearHistory() {
+            localStorage.removeItem('generatedNumbers');
+            generatedNumbers = [];
+            document.getElementById("result").innerHTML = "历史记录已清除！";
+            document.getElementById("historyList").innerHTML = ""; // 清空列表显示
+        }
+    </script>
+</body>
+</html>

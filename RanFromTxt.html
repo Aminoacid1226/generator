@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机内容生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .history {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>从文件随机抽取内容</h1>
+        <button onclick="generateRandomLine()">生成随机内容</button>
+        <button onclick="clearHistory()">清除历史记录</button>
+        <p id="result">点击按钮生成随机内容</p>
+        <div class="history">
+            <h2>生成历史</h2>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let generatedLines = JSON.parse(localStorage.getItem('generatedLines')) || [];
+
+        window.onload = function() {
+            if (generatedLines.length > 0) {
+                document.getElementById("result").innerHTML = "继续上次生成的内容";
+                let historyList = document.getElementById("historyList");
+                generatedLines.forEach(function(line) {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = line;
+                    historyList.appendChild(listItem);
+                });
+            }
+        };
+
+        
+        async function fetchLines() {
+            const response = await fetch('666.txt'); // 读取文本文件
+            const text = await response.text();
+            return text.split('\n'); // 按行分割成数组
+        }
+
+        async function generateRandomLine() {
+            const lines = await fetchLines(); // 获取所有行
+            if (lines.length === 0) {
+                document.getElementById("result").innerHTML = "没有可用内容！";
+                return;
+            }
+
+            let randomLine;
+            do {
+                randomLine = lines[Math.floor(Math.random() * lines.length)];
+            } while (generatedLines.includes(randomLine)); // 如果已生成则重新生成
+
+            generatedLines.push(randomLine);
+            document.getElementById("result").innerHTML = randomLine;
+
+            localStorage.setItem('generatedLines', JSON.stringify(generatedLines));
+
+            let historyList = document.getElementById("historyList");
+            let listItem = document.createElement("li");
+            listItem.textContent = randomLine;
+            historyList.appendChild(listItem);
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('generatedLines');
+            generatedLines = [];
+            document.getElementById("result").innerHTML = "历史记录已清除！";
+            document.getElementById("historyList").innerHTML = ""; // 清空列表显示
+        }
+    </script>
+</body>
+</html>
+
