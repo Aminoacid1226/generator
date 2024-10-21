@@ -13,58 +13,61 @@
             background-color: #f0f0f0;
         }
         .container {
-            margin: 20px; /* 增加外边距 */
+            margin: 20px;
         }
         h1 {
             color: #333;
-            font-size: 24px; /* 大标题 */
+            font-size: 24px;
         }
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 15px; /* 适当调整内边距 */
+            padding: 10px 15px;
             margin-top: 20px;
+            margin-bottom: 30px; /* 增加按钮与生成内容的间距 */
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            width: 90%; /* 按钮宽度适应屏幕 */
-            max-width: 300px; /* 最大宽度限制 */
+            width: 90%;
+            max-width: 300px;
         }
         button:hover {
             background-color: #45a049;
         }
         p {
-            font-size: 18px;
+            font-size: 20px; /* 加大生成内容的字体 */
+            font-weight: bold; /* 突出生成的内容 */
             color: #333;
+            margin-bottom: 40px; /* 增加生成内容与历史记录之间的间距 */
         }
         .history {
-            margin-top: 20px;
+            margin-top: 40px; /* 增加历史记录与生成内容的间距 */
         }
         ul {
-            list-style-type: none; /* 去掉默认列表样式 */
-            padding: 0; /* 去掉内边距 */
+            list-style-type: none;
+            padding: 0;
         }
         li {
-            text-align: left; /* 列表内容左对齐 */
-            font-size: 16px; /* 调整字体大小 */
-            margin: 5px 0; /* 增加列表项间距 */
+            text-align: left;
+            font-size: 16px;
+            margin: 5px 0;
         }
 
         /* 媒体查询：适配手机端 */
         @media (max-width: 600px) {
             h1 {
-                font-size: 20px; /* 较小设备上的标题 */
+                font-size: 20px;
             }
             button {
-                padding: 10px 10px; /* 较小设备上的按钮内边距 */
-                font-size: 14px; /* 较小设备上的按钮字体 */
+                padding: 10px 10px;
+                font-size: 14px;
             }
             p {
-                font-size: 16px; /* 较小设备上的段落字体 */
+                font-size: 18px;
             }
             li {
-                font-size: 14px; /* 较小设备上的列表项字体 */
+                font-size: 14px;
             }
         }
     </style>
@@ -121,18 +124,4 @@
 
             localStorage.setItem('generatedLines', JSON.stringify(generatedLines));
 
-            let historyList = document.getElementById("historyList");
-            let listItem = document.createElement("li");
-            listItem.textContent = `${randomLine} - ${timestamp}`;
-            historyList.prepend(listItem);
-        }
-
-        function clearHistory() {
-            localStorage.removeItem('generatedLines');
-            generatedLines = [];
-            document.getElementById("result").innerHTML = "历史记录已清除！";
-            document.getElementById("historyList").innerHTML = "";
-        }
-    </script>
-</body>
-</html>
+            let historyList = doc
