@@ -13,20 +13,23 @@
             background-color: #f0f0f0;
         }
         .container {
-            margin-top: 100px;
+            margin: 20px; /* 增加外边距 */
         }
         h1 {
             color: #333;
+            font-size: 24px; /* 大标题 */
         }
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 15px; /* 适当调整内边距 */
             margin-top: 20px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            width: 90%; /* 按钮宽度适应屏幕 */
+            max-width: 300px; /* 最大宽度限制 */
         }
         button:hover {
             background-color: #45a049;
@@ -37,6 +40,32 @@
         }
         .history {
             margin-top: 20px;
+        }
+        ul {
+            list-style-type: none; /* 去掉默认列表样式 */
+            padding: 0; /* 去掉内边距 */
+        }
+        li {
+            text-align: left; /* 列表内容左对齐 */
+            font-size: 16px; /* 调整字体大小 */
+            margin: 5px 0; /* 增加列表项间距 */
+        }
+
+        /* 媒体查询：适配手机端 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px; /* 较小设备上的标题 */
+            }
+            button {
+                padding: 10px 10px; /* 较小设备上的按钮内边距 */
+                font-size: 14px; /* 较小设备上的按钮字体 */
+            }
+            p {
+                font-size: 16px; /* 较小设备上的段落字体 */
+            }
+            li {
+                font-size: 14px; /* 较小设备上的列表项字体 */
+            }
         }
     </style>
 </head>
@@ -53,30 +82,28 @@
     </div>
 
     <script type="text/javascript">
-        // 记录生成的内容和时间
         let generatedLines = JSON.parse(localStorage.getItem('generatedLines')) || [];
 
         window.onload = function() {
             if (generatedLines.length > 0) {
                 document.getElementById("result").innerHTML = "继续上次生成的内容";
                 let historyList = document.getElementById("historyList");
-                // 逆序遍历以显示最新的在前
                 generatedLines.forEach(function(entry) {
                     let listItem = document.createElement("li");
-                    listItem.textContent = `${entry.line} - ${entry.time}`; // 显示内容和时间
+                    listItem.textContent = `${entry.line} - ${entry.time}`;
                     historyList.appendChild(listItem);
                 });
             }
         };
 
         async function fetchLines() {
-            const response = await fetch('666.txt'); // 读取文本文件
+            const response = await fetch('lines.txt');
             const text = await response.text();
-            return text.split('\n').filter(line => line.trim() !== ''); // 移除空行
+            return text.split('\n').filter(line => line.trim() !== '');
         }
 
         async function generateRandomLine() {
-            const lines = await fetchLines(); // 获取所有行
+            const lines = await fetchLines();
             if (lines.length === 0) {
                 document.getElementById("result").innerHTML = "没有可用内容！";
                 return;
@@ -85,11 +112,10 @@
             let randomLine;
             do {
                 randomLine = lines[Math.floor(Math.random() * lines.length)];
-            } while (generatedLines.some(entry => entry.line === randomLine)); // 如果已生成则重新生成
+            } while (generatedLines.some(entry => entry.line === randomLine));
 
-            // 记录生成的内容和时间
-            const timestamp = new Date().toLocaleString(); // 获取当前时间
-            generatedLines.unshift({ line: randomLine, time: timestamp }); // 添加到数组前面
+            const timestamp = new Date().toLocaleString();
+            generatedLines.unshift({ line: randomLine, time: timestamp });
 
             document.getElementById("result").innerHTML = randomLine;
 
@@ -97,15 +123,15 @@
 
             let historyList = document.getElementById("historyList");
             let listItem = document.createElement("li");
-            listItem.textContent = `${randomLine} - ${timestamp}`; // 显示内容和时间
-            historyList.prepend(listItem); // 添加到列表前面
+            listItem.textContent = `${randomLine} - ${timestamp}`;
+            historyList.prepend(listItem);
         }
 
         function clearHistory() {
             localStorage.removeItem('generatedLines');
             generatedLines = [];
             document.getElementById("result").innerHTML = "历史记录已清除！";
-            document.getElementById("historyList").innerHTML = ""; // 清空列表显示
+            document.getElementById("historyList").innerHTML = "";
         }
     </script>
 </body>
