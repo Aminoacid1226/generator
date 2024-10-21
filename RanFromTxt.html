@@ -75,8 +75,8 @@
 <body>
     <div class="container">
         <h1>从文件随机抽取内容</h1>
-        <button onclick="generateRandomLine()">生成随机内容</button>
-        <button onclick="clearHistory()">清除历史记录</button>
+        <button id="generateButton">生成随机内容</button>
+        <button id="clearButton">清除历史记录</button>
         <p id="result">点击按钮生成随机内容</p>
         <div class="history">
             <h2>生成历史</h2>
@@ -87,6 +87,7 @@
     <script type="text/javascript">
         let generatedLines = JSON.parse(localStorage.getItem('generatedLines')) || [];
 
+        // 页面加载时显示历史记录
         window.onload = function() {
             if (generatedLines.length > 0) {
                 document.getElementById("result").innerHTML = "继续上次生成的内容";
@@ -99,12 +100,14 @@
             }
         };
 
+        // 读取文本文件并分行
         async function fetchLines() {
-            const response = await fetch('666.txt');
+            const response = await fetch('666.txt');  // 确保文件路径正确
             const text = await response.text();
-            return text.split('\n').filter(line => line.trim() !== '');
+            return text.split('\n').filter(line => line.trim() !== '');  // 去除空行
         }
 
+        // 生成随机内容
         async function generateRandomLine() {
             const lines = await fetchLines();
             if (lines.length === 0) {
@@ -115,7 +118,7 @@
             let randomLine;
             do {
                 randomLine = lines[Math.floor(Math.random() * lines.length)];
-            } while (generatedLines.some(entry => entry.line === randomLine));
+            } while (generatedLines.some(entry => entry.line === randomLine)); // 检查重复
 
             const timestamp = new Date().toLocaleString();
             generatedLines.unshift({ line: randomLine, time: timestamp });
@@ -124,4 +127,23 @@
 
             localStorage.setItem('generatedLines', JSON.stringify(generatedLines));
 
-            let historyList = doc
+            let historyList = document.getElementById("historyList");
+            let listItem = document.createElement("li");
+            listItem.textContent = `${randomLine} - ${timestamp}`;
+            historyList.prepend(listItem); // 最新的历史放在前面
+        }
+
+        // 清除历史记录
+        function clearHistory() {
+            localStorage.removeItem('generatedLines');
+            generatedLines = [];
+            document.getElementById("result").innerHTML = "历史记录已清除！";
+            document.getElementById("historyList").innerHTML = ""; // 清空历史记录显示
+        }
+
+        // 绑定按钮事件
+        document.getElementById("generateButton").addEventListener("click", generateRandomLine);
+        document.getElementById("clearButton").addEventListener("click", clearHistory);
+    </script>
+</body>
+</html>
