@@ -24,7 +24,7 @@
             color: white;
             padding: 10px 15px;
             margin-top: 20px;
-            margin-bottom: 30px; /* 增加按钮与生成内容的间距 */
+            margin-bottom: 30px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
@@ -36,13 +36,13 @@
             background-color: #45a049;
         }
         p {
-            font-size: 20px; /* 加大生成内容的字体 */
-            font-weight: bold; /* 突出生成的内容 */
+            font-size: 20px;
+            font-weight: bold;
             color: #333;
-            margin-bottom: 40px; /* 增加生成内容与历史记录之间的间距 */
+            margin-bottom: 40px;
         }
         .history {
-            margin-top: 40px; /* 增加历史记录与生成内容的间距 */
+            margin-top: 40px;
         }
         ul {
             list-style-type: none;
@@ -52,6 +52,10 @@
             text-align: left;
             font-size: 16px;
             margin: 5px 0;
+        }
+        .line-status {
+            font-size: 16px;
+            margin-top: 20px;
         }
 
         /* 媒体查询：适配手机端 */
@@ -78,6 +82,13 @@
         <button id="generateButton">生成随机内容</button>
         <button id="clearButton">清除历史记录</button>
         <p id="result">点击按钮生成随机内容</p>
+
+        <!-- 行数状态 -->
+        <div class="line-status">
+            <p>已抽取行数：<span id="extractedCount">0</span></p>
+            <p>剩余行数：<span id="remainingCount">0</span></p>
+        </div>
+
         <div class="history">
             <h2>生成历史</h2>
             <ul id="historyList"></ul>
@@ -86,9 +97,13 @@
 
     <script type="text/javascript">
         let generatedLines = JSON.parse(localStorage.getItem('generatedLines')) || [];
+        let totalLines = [];  // 保存从文件中读取的所有行
 
-        // 页面加载时显示历史记录
-        window.onload = function() {
+        // 页面加载时显示历史记录和行数状态
+        window.onload = async function() {
+            totalLines = await fetchLines();  // 获取所有行
+            updateLineStatus();  // 更新已抽取和剩余行数
+
             if (generatedLines.length > 0) {
                 document.getElementById("result").innerHTML = "继续上次生成的内容";
                 let historyList = document.getElementById("historyList");
@@ -109,15 +124,18 @@
 
         // 生成随机内容
         async function generateRandomLine() {
-            const lines = await fetchLines();
-            if (lines.length === 0) {
+            if (totalLines.length === 0) {
+                totalLines = await fetchLines();  // 如果尚未加载文本，获取所有行
+            }
+
+            if (totalLines.length === 0) {
                 document.getElementById("result").innerHTML = "没有可用内容！";
                 return;
             }
 
             let randomLine;
             do {
-                randomLine = lines[Math.floor(Math.random() * lines.length)];
+                randomLine = totalLines[Math.floor(Math.random() * totalLines.length)];
             } while (generatedLines.some(entry => entry.line === randomLine)); // 检查重复
 
             const timestamp = new Date().toLocaleString();
@@ -131,6 +149,8 @@
             let listItem = document.createElement("li");
             listItem.textContent = `${randomLine} - ${timestamp}`;
             historyList.prepend(listItem); // 最新的历史放在前面
+
+            updateLineStatus();  // 每次生成新行后更新状态
         }
 
         // 清除历史记录
@@ -139,6 +159,13 @@
             generatedLines = [];
             document.getElementById("result").innerHTML = "历史记录已清除！";
             document.getElementById("historyList").innerHTML = ""; // 清空历史记录显示
+            updateLineStatus();  // 更新状态
+        }
+
+        // 更新已抽取和剩余行数
+        function updateLineStatus() {
+            document.getElementById("extractedCount").textContent = generatedLines.length;
+            document.getElementById("remainingCount").textContent = totalLines.length - generatedLines.length;
         }
 
         // 绑定按钮事件
