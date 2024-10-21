@@ -54,10 +54,15 @@
             margin: 5px 0;
         }
         .line-status {
-            font-size: 12px;
+            font-size: 14px;
             margin-top: 20px;
+            color: #666;
         }
-
+        .line-status span {
+            font-size: 12px;  /* 修改为适中的字体大小 */
+            color: #999;      /* 更淡的颜色 */
+        }
+        
         /* 媒体查询：适配手机端 */
         @media (max-width: 600px) {
             h1 {
@@ -73,7 +78,12 @@
             li {
                 font-size: 14px;
             }
+            .line-status span {
+                font-size: 10px;  /* 手机端下调整为更小的字体 */
+                color: #bbb;      /* 手机端下更浅的颜色 */
+            }
         }
+
     </style>
 </head>
 <body>
@@ -84,7 +94,7 @@
         <p id="result">点击按钮生成随机内容</p>
 
         <!-- 行数状态 -->
-        <div class="line-status" style="font-size: 12px; color: #666;">
+        <div class="line-status">
             <p>已抽取问题：<span id="extractedCount">0</span></p>
             <p>剩余问题：<span id="remainingCount">0</span></p>
         </div>
