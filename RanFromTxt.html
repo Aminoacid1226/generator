@@ -97,7 +97,7 @@
         };
 
         async function fetchLines() {
-            const response = await fetch('lines.txt');
+            const response = await fetch('666.txt');
             const text = await response.text();
             return text.split('\n').filter(line => line.trim() !== '');
         }
