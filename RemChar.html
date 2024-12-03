@@ -19,6 +19,7 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            margin-right: 10px;
         }
         #output {
             margin-top: 10px;
@@ -47,6 +48,8 @@
     <h2>去除文本中的中文字符</h2>
     <textarea id="inputText" placeholder="请输入文本..."></textarea><br>
     <button onclick="removeChinese()">去除中文</button>
+    <button onclick="clearText()">清空文本框</button>
+    <button onclick="pasteText()">粘贴内容</button>
 
     <h3>去除中文后的结果：</h3>
     <div id="output"></div>
@@ -87,6 +90,21 @@
             const result = inputText.replace(/[\u4e00-\u9fa5]/g, '');
             document.getElementById("output").textContent = result;
             saveHistory(result);  // 保存到历史记录
+        }
+
+        // 清空文本框
+        function clearText() {
+            document.getElementById("inputText").value = '';  // 清空文本框内容
+            document.getElementById("output").textContent = '';  // 清空输出结果
+        }
+
+        // 粘贴内容到文本框
+        function pasteText() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById("inputText").value = text;
+            }).catch(err => {
+                alert("无法获取剪贴板内容: " + err);
+            });
         }
 
         // 页面加载时加载历史记录
