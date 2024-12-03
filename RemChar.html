@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>去除中文并记录历史</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #output {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            width: 100%;
+            height: 100px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+        .history {
+            margin-top: 20px;
+        }
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .history li {
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>去除文本中的中文字符</h2>
+    <textarea id="inputText" placeholder="请输入文本..."></textarea><br>
+    <button onclick="removeChinese()">去除中文</button>
+
+    <h3>去除中文后的结果：</h3>
+    <div id="output"></div>
+
+    <div class="history">
+        <h3>历史记录：</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <script>
+        // 从 localStorage 加载历史记录
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('history')) || [];
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';  // 清空历史记录
+            history.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                historyList.appendChild(li);
+            });
+        }
+
+        // 保存历史记录到 localStorage
+        function saveHistory(text) {
+            let history = JSON.parse(localStorage.getItem('history')) || [];
+            // 如果记录已经存在，则不重复添加
+            if (!history.includes(text)) {
+                history.push(text);
+                localStorage.setItem('history', JSON.stringify(history));
+            }
+            loadHistory();  // 更新历史记录
+        }
+
+        // 去除中文字符并保存历史记录
+        function removeChinese() {
+            const inputText = document.getElementById("inputText").value;
+            // 使用正则表达式去除中文字符
+            const result = inputText.replace(/[\u4e00-\u9fa5]/g, '');
+            document.getElementById("output").textContent = result;
+            saveHistory(result);  // 保存到历史记录
+        }
+
+        // 页面加载时加载历史记录
+        window.onload = loadHistory;
+    </script>
+
+</body>
+</html>
